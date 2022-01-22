@@ -82,9 +82,9 @@ const Grabable = ({ item }) => {
     >
       <img style={{ width: 130, minHeight: 130 }} src={item.image} alt="" />
       <div style={{ opacity: 0.77 }}>{item.description}</div>
-      <Divider />
       {!item.isMintable && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "stretch" }}>
+          <Divider />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             {"Owner"}
             <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
