@@ -30,7 +30,7 @@ const Mine = ({ grabables }) => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", width: "36rem", margin: "auto", gap: "2rem" }}>
       {ownGrabables.map(item => (
         <OwnedItem key={item.tokenId + "_" + item.uriHash + "_" + item.owner} item={item} />
       ))}

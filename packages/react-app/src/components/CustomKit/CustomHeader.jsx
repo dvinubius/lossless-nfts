@@ -35,7 +35,7 @@ export default function CustomHeader() {
             letterSpacing: "0.1rem",
           }}
         >
-          MINE! {/* ✨{" "} */}
+          MINE {/* ✨{" "} */}
           <div
             style={{ marginLeft: "0.5rem", marginRight: 0, transform: "rotateY(180deg) translateY(3px)" }}
             className="logo"

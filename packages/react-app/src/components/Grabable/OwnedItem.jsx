@@ -1,12 +1,13 @@
 import { LinkOutlined, LockOutlined, SendOutlined, UnlockOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import { Button, Card, Divider } from "antd";
 import { useContext, useState } from "react";
 import { AppContext } from "../../App";
-import { curveGradient, mediumBorder } from "../../styles";
+import { curveGradient, mediumBorder, primaryColor, softBorder, softBorder2, softTextColor } from "../../styles";
 import CustomAddressInput from "../CustomKit/CustomAddressInput";
+import CustomBalance from "../CustomKit/CustomBalance";
 
 const OwnedItem = ({ item }) => {
-  const { readContracts, userAddress, writeContracts, mainnetProvider, tx } = useContext(AppContext);
+  const { readContracts, userAddress, writeContracts, mainnetProvider, tx, price } = useContext(AppContext);
 
   const [toAddress, setToAddress] = useState();
   const [executingLock, setExecutingLock] = useState(false);
@@ -71,8 +72,9 @@ const OwnedItem = ({ item }) => {
         display: "flex",
         width: "100%",
         justifyContent: "space-between",
-        marginBottom: "2rem",
-        borderBottom: mediumBorder,
+        border: softBorder,
+        borderRadius: 4,
+        boxShadow: "rgb(244 244 244) 0px 3px 10px -1px",
       }}
     >
       <Card
@@ -103,14 +105,14 @@ const OwnedItem = ({ item }) => {
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: "stretch",
           justifyContent: "space-between",
           padding: "1rem",
         }}
       >
         <div
           style={{
-            flex: 1,
+            // flex: 1,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -137,6 +139,39 @@ const OwnedItem = ({ item }) => {
           >
             Transfer <SendOutlined />
           </Button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "stretch", padding: "0 2rem" }}>
+          {item.grabPrice && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span>Grab Price</span>
+              <span>{<CustomBalance etherMode value={item.grabPrice} size={16} padding={0} price={price} />}</span>
+            </div>
+          )}
+          {item.premium && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span>Premium </span>
+                <span className="mono-nice" style={{ fontWeight: 500, fontSize: 16 }}>{`${
+                  item.premium.toNumber() / 100
+                }%`}</span>
+              </div>
+              <Divider style={{ margin: "0.5rem 0 " }}></Divider>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+                <span style={{}}>On grab you get</span>
+                <span className="mono-nice" style={{ fontWeight: 500, fontSize: 16, color: "deeppink" }}>
+                  {
+                    <CustomBalance
+                      etherMode
+                      value={item.grabPrice.mul(item.premium).div(10000)}
+                      size={16}
+                      padding={0}
+                      price={price}
+                    />
+                  }
+                </span>
+              </div>
+            </>
+          )}
         </div>
         {lockUnlockButton(item)}
       </div>

@@ -163,7 +163,7 @@ const MintButton = ({ grabable }) => {
             <IntegerStep
               mi={minPrice}
               ma={maxPrice}
-              step={0.001}
+              step={(maxPrice - minPrice) / 100}
               update={setPrice}
               tipFormatter={v => `${(v / 1000).toFixed(4)} Ξ`}
               sliderWidth={`20rem`}
@@ -203,7 +203,7 @@ const MintButton = ({ grabable }) => {
             <IntegerStep
               mi={0}
               ma={10000}
-              step={1}
+              step={10}
               tipFormatter={v => Math.floor(v / 100) + "%"}
               update={setPremium}
               sliderWidth={`20rem`}

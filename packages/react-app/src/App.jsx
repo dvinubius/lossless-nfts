@@ -68,7 +68,7 @@ const getFromIPFS = async hashToGet => {
 };
 
 /// 📡 What chain are your contracts deployed to?
-const defaultTargetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const defaultTargetNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -442,15 +442,26 @@ const App = props => {
               </Button>
             </Link>
 
-            <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
+            <Menu
+              style={{ textAlign: "center", margin: "0.5rem 0" }}
+              selectedKeys={[location.pathname]}
+              mode="horizontal"
+            >
               <Menu.Item key="/">
-                <Link to="/">Collection</Link>
+                <Link to="/">
+                  <span style={{ letterSpacing: "0.05rem", margin: "0 2rem", fontSize: "1rem" }}>Gallery</span>
+                </Link>
               </Menu.Item>
-              <Menu.Item key="/mygrabables">
-                <Link to="/mygrabables">Mine</Link>
+              <Menu.Item key="/owned">
+                <Link to="/owned">
+                  <span style={{ letterSpacing: "0.05rem", margin: "0 2rem", fontSize: "1rem" }}>Owned</span>
+                </Link>
               </Menu.Item>
+
               <Menu.Item key="/transfers">
-                <Link to="/">Transfers</Link>
+                <Link to="/">
+                  <span style={{ letterSpacing: "0.05rem", margin: "0 2rem", fontSize: "1rem" }}>Transfers</span>
+                </Link>
               </Menu.Item>
             </Menu>
 
@@ -484,7 +495,7 @@ const App = props => {
                   )}
                 </Route>
 
-                <Route path="/mygrabables">
+                <Route path="/owned">
                   <div style={{ width: "40rem", margin: "auto", marginTop: "4rem", paddingBottom: "2rem" }}>
                     <Mine grabables={grabables} />
                   </div>

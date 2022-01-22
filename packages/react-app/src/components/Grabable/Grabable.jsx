@@ -62,6 +62,7 @@ const Grabable = ({ item }) => {
         maxWidth: "16rem",
         // background: swapGradient ,
         background: curveGradient,
+        boxShadow: "rgb(244 244 244) 0px 3px 10px -1px",
       }}
       key={item.name}
       actions={[cardAction]}

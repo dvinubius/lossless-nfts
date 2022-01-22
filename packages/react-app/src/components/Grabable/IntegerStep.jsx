@@ -3,7 +3,18 @@ import { Slider, InputNumber, Row, Col, Input } from "antd";
 import { useState } from "react";
 import { softTextColor } from "../../styles";
 
-const IntegerStep = ({ mi, ma, update, sliderWidth, leftText, rightText, bottomText, displayValue, tipFormatter }) => {
+const IntegerStep = ({
+  mi,
+  ma,
+  update,
+  sliderWidth,
+  leftText,
+  rightText,
+  bottomText,
+  displayValue,
+  tipFormatter,
+  step,
+}) => {
   const [inputValue, setInputValue] = useState(mi);
 
   const onChange = value => {
@@ -46,6 +57,7 @@ const IntegerStep = ({ mi, ma, update, sliderWidth, leftText, rightText, bottomT
           <Slider
             min={mi}
             max={ma}
+            step={step ?? 1}
             onChange={onChange}
             value={typeof inputValue === "number" ? inputValue : 0}
             tipFormatter={tipFormatter}
