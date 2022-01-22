@@ -155,21 +155,27 @@ const OwnedItem = ({ item }) => {
                   item.premium.toNumber() / 100
                 }%`}</span>
               </div>
-              <Divider style={{ margin: "0.5rem 0 " }}></Divider>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
-                <span style={{}}>On grab you get</span>
-                <span className="mono-nice" style={{ fontWeight: 500, fontSize: 16, color: "deeppink" }}>
-                  {
-                    <CustomBalance
-                      etherMode
-                      value={item.grabPrice.mul(item.premium).div(10000)}
-                      size={16}
-                      padding={0}
-                      price={price}
-                    />
-                  }
-                </span>
-              </div>
+              {!item.isLocked && (
+                <>
+                  <Divider style={{ margin: "0.5rem 0 " }}></Divider>
+                  <div
+                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}
+                  >
+                    <span style={{}}>On grab you get</span>
+                    <span className="mono-nice" style={{ fontWeight: 500, fontSize: 16, color: "deeppink" }}>
+                      {
+                        <CustomBalance
+                          etherMode
+                          value={item.grabPrice.mul(item.premium).div(10000)}
+                          size={16}
+                          padding={0}
+                          price={price}
+                        />
+                      }
+                    </span>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
