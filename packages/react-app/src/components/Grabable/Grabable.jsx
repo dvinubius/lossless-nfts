@@ -4,17 +4,17 @@ import { LinkOutlined } from "@ant-design/icons";
 import { AppContext } from "../../App";
 import CustomAddress from "../CustomKit/CustomAddress";
 const { ethers } = require("ethers");
-import { curveGradient, swapGradient } from "../../styles";
+import { curveGradient, softTextColor, swapGradient } from "../../styles";
 import CustomBalance from "../CustomKit/CustomBalance";
 import MintButton from "./MintButton";
 
-const Grabable = ({ grabable }) => {
+const Grabable = ({ item }) => {
   const { mainnetProvider, blockExplorer, tx, writeContracts, price, userAddress } = useContext(AppContext);
   const [executing, setExecuting] = useState(false);
 
   const handleGrab = async () => {
     setExecuting(true);
-    tx(writeContracts.Grabable.grab(grabable.tokenId, { value: grabable.grabPrice }), update => {
+    tx(writeContracts.Grabable.grab(item.tokenId, { value: item.grabPrice }), update => {
       if (update && (update.error || update.reason)) {
         setExecuting(false);
       }
@@ -29,29 +29,29 @@ const Grabable = ({ grabable }) => {
     });
   };
 
-  const cardAction = grabable.isMintable ? (
-    <MintButton grabable={grabable} />
-  ) : grabable.owner === userAddress ? (
+  const messageDisplay = (text, color) => (
     <div
       style={{
         height: 40,
-        color: "deeppink",
+        color: color,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         fontSize: 14,
       }}
     >
-      You're the current owner{" "}
+      {text}
     </div>
+  );
+
+  const cardAction = item.isMintable ? (
+    <MintButton grabable={item} />
+  ) : item.owner === userAddress ? (
+    messageDisplay("You're the current owner", "deeppink")
+  ) : item.isLocked ? (
+    messageDisplay("Locked", softTextColor)
   ) : (
-    <Button
-      size="large"
-      // type="primary"
-      loading={executing}
-      style={{ width: "7rem", color: "deeppink" }}
-      onClick={handleGrab}
-    >
+    <Button size="large" loading={executing} style={{ width: "7rem", color: "deeppink" }} onClick={handleGrab}>
       Grab!
     </Button>
   );
@@ -63,14 +63,14 @@ const Grabable = ({ grabable }) => {
         // background: swapGradient ,
         background: curveGradient,
       }}
-      key={grabable.name}
+      key={item.name}
       actions={[cardAction]}
       title={
         <div>
-          {grabable.name}{" "}
+          {item.name}{" "}
           <a
             style={{ cursor: "pointer", opacity: 0.5, float: "right" }}
-            href={grabable.external_url}
+            href={item.external_url}
             target="_blank"
             rel="noreferrer"
           >
@@ -79,33 +79,33 @@ const Grabable = ({ grabable }) => {
         </div>
       }
     >
-      <img style={{ width: 130, minHeight: 130 }} src={grabable.image} alt="" />
-      <div style={{ opacity: 0.77 }}>{grabable.description}</div>
+      <img style={{ width: 130, minHeight: 130 }} src={item.image} alt="" />
+      <div style={{ opacity: 0.77 }}>{item.description}</div>
       <Divider />
-      {!grabable.isMintable && (
+      {!item.isMintable && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "stretch" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             {"Owner"}
             <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
               <CustomAddress
-                address={grabable.owner}
+                address={item.owner}
                 fontSize={14}
                 ensProvider={mainnetProvider}
                 blockExplorer={blockExplorer}
               />
             </div>
           </div>
-          {grabable.grabPrice && (
+          {item.grabPrice && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span>Grab </span>
-              <span>{<CustomBalance etherMode value={grabable.grabPrice} size={16} padding={0} price={price} />}</span>
+              <span>{<CustomBalance etherMode value={item.grabPrice} size={16} padding={0} price={price} />}</span>
             </div>
           )}
-          {grabable.premium && (
+          {item.premium && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span>Premium </span>
               <span className="mono-nice" style={{ fontWeight: 500, fontSize: 16 }}>{`${
-                grabable.premium.toNumber() / 100
+                item.premium.toNumber() / 100
               }%`}</span>
             </div>
           )}

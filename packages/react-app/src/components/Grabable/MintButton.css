@@ -1,4 +1,5 @@
 .primary-input {
-  color: rgb(24, 144, 255);
+  /* color: rgb(24, 144, 255) !important; */
+  color: hsl(209deg, 100%, 24%) !important;
   font-weight: 500 !important;
 }

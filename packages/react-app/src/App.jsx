@@ -1,7 +1,14 @@
 import { Button, Col, Menu, Row, Spin } from "antd";
 import "antd/dist/antd.css";
 
-import { useBalance, useContractLoader, useGasPrice, useOnBlock, useUserProviderAndSigner } from "eth-hooks";
+import {
+  useBalance,
+  useContractLoader,
+  useContractReader,
+  useGasPrice,
+  useOnBlock,
+  useUserProviderAndSigner,
+} from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 
@@ -192,6 +199,11 @@ const App = props => {
   //   "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   // ]);
 
+  // TODO read with current user address as author argument, once we set these per author
+  const minMintPrice = useContractReader(readContracts, "Grabable", "minPrice", []);
+
+  const [beforeInit, setBeforeInit] = useState(true);
+
   // LOAD DATA FROM ALL
   const [fetchingMD, setFetchingMD] = useState(false);
   const [metadata, setMetadata] = useState();
@@ -225,8 +237,6 @@ const App = props => {
   const [fetchingNfts, setFetchingNfts] = useState();
   const [grabables, setGrabables] = useState([]);
 
-  const getCurrentGrabables = () => grabables;
-
   const updateGrabables = async () => {
     setFetchingNfts(true);
     try {
@@ -240,7 +250,9 @@ const App = props => {
         const owner = tokenDetails[2];
         const grabPrice = tokenDetails[3];
         const premium = tokenDetails[4];
-        return { ...md, tokenId, tokenURI, owner, grabPrice, premium };
+        const isLocked = tokenDetails[5];
+        const lockFee = tokenDetails[6];
+        return { ...md, tokenId, tokenURI, owner, grabPrice, premium, isLocked, lockFee };
       };
       // metadata.forEach(md => {
       //   getGrabable(md).then(grb => {
@@ -263,6 +275,7 @@ const App = props => {
       console.log(e);
     } finally {
       setFetchingNfts(false);
+      setBeforeInit(false);
     }
   };
 
@@ -277,12 +290,21 @@ const App = props => {
   // 📟 Listen for broadcast events
   const transferEvents = useEventListener(readContracts, "Grabable", "Transfer", localProvider, 1);
   // console.log("📟 Transfer events:", transferEvents);
+  const lockEvents = useEventListener(readContracts, "Grabable", "Locked", localProvider, 1);
+  const unLockEvents = useEventListener(readContracts, "Grabable", "Unlocked", localProvider, 1);
 
   // SUBSEQUENT FETCHES
   useEffect(() => {
     if (!grabables || !grabables.length) return;
     updateGrabables();
-  }, [transferEvents]);
+  }, [transferEvents, lockEvents, unLockEvents]);
+  // these updates on lock, unlock and transfer can be handled much more request-efficiently.
+  // for now this is ok, but would rather have it all indexed by a backend, so updates only
+  // talk to backend DB, not to RPC nodes
+
+  // keep in mind that tseveral transfer/lock/unlock events can happen in the same block
+
+  // TODO
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
@@ -356,8 +378,6 @@ const App = props => {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
-  const readyAll = readContracts && readContracts.Grabable && address && localProvider && yourLocalBalance;
-
   const appContext = {
     contractConfig,
     readContracts,
@@ -371,6 +391,8 @@ const App = props => {
     gasPrice,
     localChainId,
     blockExplorer,
+    fetching: beforeInit,
+    minMintPrice,
   };
 
   const layoutContext = {
@@ -456,7 +478,7 @@ const App = props => {
                   {grabables && grabables.length > 0 && (
                     <div style={{ maxWidth: 964, margin: "auto", marginTop: "2rem", paddingBottom: "16rem" }}>
                       <StackGrid columnWidth={260} gutterWidth={32} gutterHeight={32}>
-                        {grabables ? grabables.map(g => <Grabable grabable={g} key={g.ipfsHash} />) : []}
+                        {grabables ? grabables.map(g => <Grabable item={g} key={g.ipfsHash} />) : []}
                       </StackGrid>
                     </div>
                   )}

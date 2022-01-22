@@ -11,10 +11,25 @@ contract Grabable is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    //this marks an item in IPFS as "mintable"
+    mapping(bytes32 => bool) public mintable;
+    //this lets you look up token info by the uri (assuming there is only one of each uri for now)
+    mapping(bytes32 => uint256) public uriToTokenId;
+
     mapping(uint256 => uint256) public price; // tokenId to price
     mapping(uint256 => uint256) public premium; // tokenId to premium (basis points)
+    mapping(uint256 => bool) public locked; // tokenId to locked status
 
-    uint256 public constant minPrice = 10**14; // 0.0001 ether
+    uint256 public lockFee = 1000; // 1 % TODO map authors to lockFees
+    event Locked(uint256 indexed tokenId);
+    event Unlocked(uint256 indexed tokenId);
+
+    uint256 public constant minPrice = 10**15; // 0.001 ether
+
+    modifier freeToGrab(uint256 tokenId) {
+        require(!locked[tokenId], "this one is locked");
+        _;
+    }
 
     constructor(bytes32[] memory mintableAssets)
         public
@@ -26,11 +41,6 @@ contract Grabable is ERC721, Ownable {
         }
     }
 
-    //this marks an item in IPFS as "mintable"
-    mapping(bytes32 => bool) public mintable;
-    //this lets you look up token info by the uri (assuming there is only one of each uri for now)
-    mapping(bytes32 => uint256) public uriToTokenId;
-
     function getTokenDataByUriHash(bytes32 uri)
         public
         view
@@ -39,7 +49,9 @@ contract Grabable is ERC721, Ownable {
             string memory _tokenUri,
             address _owner,
             uint256 _grabPrice,
-            uint256 _premium
+            uint256 _premium,
+            bool _locked,
+            uint256 _lockFee
         )
     {
         tokenId = uriToTokenId[uri];
@@ -47,7 +59,13 @@ contract Grabable is ERC721, Ownable {
         _owner = ownerOf(tokenId);
         _grabPrice = grabPrice(tokenId);
         _premium = premium[tokenId];
+        _locked = locked[tokenId];
+        _lockFee = lockFee; // TODO take from mapping when associated with author
     }
+
+    // --------- AUTHOR ---------- //
+
+    // --------- MINTING --------- //
 
     function mintItem(string memory tokenURI, uint256 _premium)
         public
@@ -78,7 +96,14 @@ contract Grabable is ERC721, Ownable {
         return id;
     }
 
-    function grab(uint256 tokenId) public payable returns (uint256) {
+    // --------- GRABS --------- //
+
+    function grab(uint256 tokenId)
+        public
+        payable
+        freeToGrab(tokenId)
+        returns (uint256)
+    {
         require(_exists(tokenId), "token id has no owner");
         uint256 total = grabPrice(tokenId);
         require(msg.value >= total, "pay the price plus premium, ser");
@@ -105,6 +130,46 @@ contract Grabable is ERC721, Ownable {
         uint256 _premium = premium[_tokenId];
         return (_price * _premium) / 10000; // 100 for percentage and 100 for 2-decimal precision
     }
+
+    // -------- LOCKING
+
+    modifier onlyTokenOwner(uint256 _tokenId) {
+        require(
+            msg.sender == ownerOf(_tokenId),
+            "only the owner can lock/unlock"
+        );
+        _;
+    }
+
+    function lockToken(uint256 _tokenId)
+        public
+        payable
+        onlyTokenOwner(_tokenId)
+    {
+        require(
+            !locked[_tokenId],
+            "currently locked. you better save your gas"
+        );
+        require(
+            msg.value == lockFee,
+            "pay the fee, ser" // TODO take from mapping when associated with author
+        );
+        locked[_tokenId] = true;
+        emit Locked(_tokenId);
+    }
+
+    function unlockToken(uint256 _tokenId) public onlyTokenOwner(_tokenId) {
+        require(
+            locked[_tokenId],
+            "currently not locked. you better save your gas"
+        );
+        locked[_tokenId] = false;
+        emit Unlocked(_tokenId);
+    }
+
+    // -------- contract money
+
+    receive() external payable {}
 
     function withdraw() public onlyOwner {
         (bool sent, bytes memory data) = payable(owner()).call{

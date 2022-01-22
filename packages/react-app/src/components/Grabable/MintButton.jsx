@@ -6,12 +6,12 @@ import CustomAddressInput from "../CustomKit/CustomAddressInput";
 import IntegerStep from "./IntegerStep";
 import CreateModalFooter from "./CreateModalFooter";
 import CreateModalSentOverlay from "./CreateModalSentOverlay";
-import { primaryColor } from "../../styles";
+import { primaryColor, softTextColor } from "../../styles";
 import "./MintButton.css";
 const { ethers } = require("ethers");
 
 const MintButton = ({ grabable }) => {
-  const { userSigner, gasPrice, writeContracts, contractConfig, localChainId, tx, userEthBalance } =
+  const { userSigner, gasPrice, writeContracts, contractConfig, localChainId, tx, userEthBalance, minMintPrice } =
     useContext(AppContext);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
@@ -117,12 +117,12 @@ const MintButton = ({ grabable }) => {
   return (
     <div>
       <Button size="large" style={{ width: "7rem" }} onClick={() => setVisibleModal(true)}>
-        Mint
+        Mint &amp; Buy
       </Button>
 
       <Modal
         destroyOnClose={true}
-        title="Setup your Grabable"
+        title="Setup your Mint &amp; Buy"
         style={{ top: 120 }}
         visible={visibleModal}
         onOk={handleMint}
@@ -134,8 +134,8 @@ const MintButton = ({ grabable }) => {
           <CreateModalSentOverlay
             txError={txError}
             txSuccess={txSuccess}
-            pendingText="Minting Grabable"
-            successText="Grabable Minted"
+            pendingText="Minting Item"
+            successText="Item Minted"
             errorText="Transaction Failed"
           />
         )}
@@ -148,8 +148,13 @@ const MintButton = ({ grabable }) => {
             paddingBottom: "2rem",
           }}
         >
-          <Divider style={{ fontSize: "1.25rem" }}>Price ETH</Divider>
+          <Divider style={{ fontSize: "1.25rem" }}>Your Price</Divider>
 
+          <div style={{ textAlign: "center", margin: "1rem auto", color: softTextColor }}>
+            {" "}
+            Author's minimum:{" "}
+            <span style={{ fontWeight: 500, color: "#222" }}>{ethers.utils.formatEther(minMintPrice)} Ξ</span>
+          </div>
           <div
             style={{
               margin: "auto",
@@ -160,6 +165,7 @@ const MintButton = ({ grabable }) => {
               ma={maxPrice}
               step={0.001}
               update={setPrice}
+              tipFormatter={v => `${(v / 1000).toFixed(4)} Ξ`}
               sliderWidth={`20rem`}
               leftText={
                 <span>
@@ -187,7 +193,7 @@ const MintButton = ({ grabable }) => {
             />
           </div>
 
-          <Divider style={{ fontSize: "1.25rem", marginTop: "4rem" }}>Premium</Divider>
+          <Divider style={{ fontSize: "1.25rem", marginTop: "4rem" }}>Grabber's Premium</Divider>
 
           <div
             style={{

@@ -10,7 +10,7 @@ Only part of the intended functionality is available so far, but
 
 ## Concept: Create and manage NFTs with up-only price
 
-Special ERC721 contract that twists the usual meaning of NFT ownership. Extra incentives are added such that the price can only ever increase.
+Special ERC721 contract that twists the usual meaning of NFT ownership. Extra incentives are added such that **the price can only ever increase**.
 ### Actors
 - Author
 - Minter
