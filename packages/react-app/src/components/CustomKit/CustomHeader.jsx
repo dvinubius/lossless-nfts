@@ -35,9 +35,9 @@ export default function CustomHeader() {
             letterSpacing: "0.1rem",
           }}
         >
-          {/* Grabables!{" "} */}
+          MINE! {/* ✨{" "} */}
           <div
-            style={{ marginLeft: "0.75rem", marginRight: 0, transform: "rotateY(180deg) translateY(3px)" }}
+            style={{ marginLeft: "0.5rem", marginRight: 0, transform: "rotateY(180deg) translateY(3px)" }}
             className="logo"
           ></div>
         </div>
