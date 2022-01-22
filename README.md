@@ -27,11 +27,14 @@ Sets
 Sets
 - price (>= minimum price)
 - premium (% value)
+- pays the price in order to mint
+- author receives these funds
 
 #### **Grabber** takes NFT permissionlessly
 - Anyone can grab an NFT
 - Grabbing requires to pay the **grabPrice** = price + premium
 - Grabber becomes the new owner
+- Previous owner receives the payment
 - grabPrice increases by the premium that was just paid (**price premium compounds** across grabs)
 
 
