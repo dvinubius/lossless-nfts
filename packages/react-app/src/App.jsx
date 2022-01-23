@@ -411,14 +411,13 @@ const App = props => {
             <div
               style={{
                 width: "fit-content",
-                borderRight: "1px solid #efefef",
-                borderBottom: "1px solid #efefef",
-                background: swapGradient,
               }}
             >
-              <Link to="/">
-                <CustomHeader />
-              </Link>
+              <div style={{ width: "fit-content" }}>
+                <Link to="/">
+                  <CustomHeader />
+                </Link>
+              </div>
             </div>
 
             <Link to="/contracts">

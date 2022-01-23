@@ -1,20 +1,65 @@
 .CustomHeader {
   position: relative;
 }
-/* .CustomHeader::after {
-  position: absolute;
-  content: "";
-  left: 0;
-  bottom: calc(-2rem - 1px);
-  width: 100vw;
-  height: 2rem;
-  background: linear-gradient(hsla(0, 0%, 100%), transparent);
-  z-index: 100;
-} */
 
 .CustomHeader .logo {
   width: 38px;
   height: 38px;
   background-size: cover;
   background-image: url("../../assets/grab2.png");
+}
+
+.alive-border {
+  margin: 0 auto;
+  width: calc(100%);
+  --top: 0.75rem;
+  margin-top: var(--top);
+  height: calc(55px - var(--top));
+  text-align: center;
+  position: relative;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  z-index: 2;
+  overflow: hidden;
+  padding: 3px;
+}
+
+.alive-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(115deg, #4fcf70, hsl(292deg, 100%, 59%), #a767e5, #12bcfe, #44ce7b);
+  background-size: 50% 100%;
+}
+
+.alive-border:hover::before {
+  animation: SidebarCreate_rainbowSlide-1kpxK 0.75s linear infinite;
+}
+
+@keyframes SidebarCreate_rainbowSlide-1kpxK {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.alive-border .title-text {
+  position: relative;
+  letter-spacing: 0.25rem;
+  color: #444;
+  font-weight: 500;
+  font-size: 1.5rem;
+  z-index: 100;
+  background: white;
+  padding: 0.25rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  text-align: center;
 }
