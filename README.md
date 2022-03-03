@@ -7,6 +7,7 @@ Project built with scaffold eth.
 Only part of the intended functionality is available so far, but
 ## Try it out on [Rinkeby](https://lossless-nfts.surge.sh/) 🤩
 
+![lossless](https://user-images.githubusercontent.com/32189942/156663696-10a8d034-7159-4f54-bb07-d7bc58360d48.png)
 
 ## Concept: Create and manage NFTs with up-only price
 
